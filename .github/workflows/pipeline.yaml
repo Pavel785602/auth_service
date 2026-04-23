@@ -11,19 +11,23 @@ jobs:
   lint-and-test:
     runs-on: self-hosted
     steps:
+      - name: Download repository
+        uses: github/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.26'
           cache: true
-      - name: Check repository
-        uses: actions/checkout@v4
+      - name: Install linter
+        run: |
+          if [ ! -f ~/go/bin/golangci-lint ]; then
+            go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          fi
       - name: Download libraries
         run: go mod download && go mod tidy
       - name: Lint Go code
-        uses: golangci/golangci-lint-action@v6
-        with:
-          go-version: '1.26'
+        run: ~/go/bin/golangci-lint run ./...
+
   build-and-push:
     needs: lint-and-test
     if: github.ref_name == 'main' || github.event_name == 'workflow_dispatch'

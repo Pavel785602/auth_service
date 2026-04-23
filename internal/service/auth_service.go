@@ -182,6 +182,9 @@ func (s *AuthService) AuthenticateWithGoogle(ctx context.Context, code string) (
 		if errors.Is(err, repository.ErrUserNotFound) {
 			// ИСПРАВЛЕНО: Теперь 5 аргументов (email, username, pwd, name, photo)
 			user, err = s.Repo.CreateUser(&googleUser.Email, nil, nil, &googleUser.Name, nil)
+			if err != nil {
+				log.Printf("Creating user error")
+			}
 		}
 		_ = s.Repo.CreateExternalLogin(user.ID, "GOOGLE", googleUser.ID)
 	}

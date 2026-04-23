@@ -230,7 +230,6 @@ func (h *AuthHandler) HandleTelegramLoginPage(w http.ResponseWriter, r *http.Req
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(html))
 	if _, err := w.Write([]byte(html)); err != nil {
 		log.Printf("Write error: %v", err)
 	}
@@ -240,7 +239,9 @@ func (h *AuthHandler) HandleTelegramLoginPage(w http.ResponseWriter, r *http.Req
 // Сюда Telegram редиректит пользователя.
 // Android-приложение "увидит" этот URL и заберет параметры.
 func (h *AuthHandler) HandleTelegramCallback(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Авторизация получена, возвращайтесь в приложение..."))
+	if _, err := w.Write([]byte("Авторизация получена, возвращайтесь в приложение...")); err != nil {
+		log.Printf("Write error: %v", err)
+	}
 }
 
 // 3. POST /auth/telegram/login (уже есть у тебя, немного уточним)

@@ -14,7 +14,7 @@ jobs:
       - name: Check repository
         uses: actions/checkout@v4
       - name: Download libraries
-        run: go mod download
+        run: go mod download && go mod tidy
       - name: Lint Go code
         uses: golangci/golangci-lint-action@v6
         with:

@@ -11,6 +11,11 @@ jobs:
   lint-and-test:
     runs-on: self-hosted
     steps:
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
       - name: Check repository
         uses: actions/checkout@v4
       - name: Download libraries
@@ -18,7 +23,7 @@ jobs:
       - name: Lint Go code
         uses: golangci/golangci-lint-action@v6
         with:
-          go-version: '1.24'
+          go-version: '1.26'
   build-and-push:
     needs: lint-and-test
     if: github.ref_name == 'main' || github.event_name == 'workflow_dispatch'

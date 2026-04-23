@@ -2,9 +2,7 @@ package main
 
 import (
 	"log"
-	"math/rand"
 	"net/http"
-	"time"
 
 	"auth_service/internal/cache"
 	"auth_service/internal/config"
@@ -55,10 +53,6 @@ func main() {
 			TokenURL: "https://oauth2.googleapis.com/token",
 		},
 	}
-
-	// Устанавливаем seed (старый стиль для совместимости, если нужно)
-	rand.Seed(time.Now().UnixNano())
-
 	// 5. ВНЕДРЕНИЕ ЗАВИСИМОСТЕЙ (СБОРКА СЛОЕВ)
 	userRepo := repository.NewPostgresUserRepository(dbPool)
 

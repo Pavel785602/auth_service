@@ -23,10 +23,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
 // IAuthService - контракт сервиса
 type IAuthService interface {
 	AuthenticateWithGoogle(ctx context.Context, code string) (string, error)

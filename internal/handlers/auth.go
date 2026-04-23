@@ -45,7 +45,9 @@ func (h *AuthHandler) logClientError(r *http.Request, errCode string, message st
 func (h *AuthHandler) sendJSONResponse(w http.ResponseWriter, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(data)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		log.Printf("failed to encode response: %v", err)
+	}
 }
 
 // --- Хэндлеры ---
@@ -164,7 +166,9 @@ func (h *AuthHandler) HandleVerifyCode(w http.ResponseWriter, r *http.Request) {
 
 func (h *AuthHandler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+	if _, err := w.Write([]byte("OK")); err != nil {
+		log.Printf("Write error: %v", err)
+	}
 }
 
 // HandleResendCode: Принимает Email и повторно отправляет код верификации.
@@ -227,6 +231,9 @@ func (h *AuthHandler) HandleTelegramLoginPage(w http.ResponseWriter, r *http.Req
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(html))
+	if _, err := w.Write([]byte(html)); err != nil {
+		log.Printf("Write error: %v", err)
+	}
 }
 
 // 2. GET /auth/telegram/callback

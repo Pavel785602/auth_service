@@ -1,0 +1,37 @@
+on:
+  workflow_dispatch: {}
+  push: {}
+  pull_request:
+    branches:
+     - main
+env:
+  UserName: ${{ secrets.DOCKERHUB_USERNAME }}
+  Token: ${{ secrets.DOCKERHUB_TOKEN }}
+jobs:
+  lint-and-test:
+    runs-on: self-hosted
+    steps:
+      - name: Check repository
+        uses: actions/checkout@v4
+      - name: Lint Go code
+        uses: golangci/golangci-lint-action
+  build-and-push:
+    needs: lint-and-test
+    if: github.ref_name == 'main' || github.event_name == 'workflow_dispatch'
+    runs-on: self-hosted
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+      - name: Auth in Docker hub
+        run: echo "${{ env.Token }}" | docker login -u "${{ env.UserName }}" --password-stdin
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/go-code:latest .
+      - name: Push image in Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/go-code:latest
+  deploy:
+    needs: build-and-push
+    if: github.ref_name == 'main' || github.event_name == 'workflow_dispatch'
+    runs-on: self-hosted
+    steps:
+      - name: Deploy image
+        run: kubectl rollout restart deployment/go-deployment

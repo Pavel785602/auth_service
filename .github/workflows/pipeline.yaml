@@ -16,7 +16,7 @@ jobs:
       - name: Lint Go code
         uses: golangci/golangci-lint-action@v6
         with:
-          go-version: '1.26'
+          go-version: '1.24'
   build-and-push:
     needs: lint-and-test
     if: github.ref_name == 'main' || github.event_name == 'workflow_dispatch'

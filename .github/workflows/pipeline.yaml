@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Check repository
         uses: actions/checkout@v4
+      - name: Download libraries
+        run: go mod download
       - name: Lint Go code
         uses: golangci/golangci-lint-action@v6
         with:
@@ -24,8 +26,6 @@ jobs:
     steps:
       - name: Download repository
         uses: actions/checkout@v4
-      - name: Download libraries
-        run: go mod download
       - name: Auth in Docker hub
         run: echo "${{ env.Token }}" | docker login -u "${{ env.UserName }}" --password-stdin
       - name: Build Docker image

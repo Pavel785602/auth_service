@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Download repository
         uses: actions/checkout@v4
+      - name: Download libraries
+        run: go mod download
       - name: Auth in Docker hub
         run: echo "${{ env.Token }}" | docker login -u "${{ env.UserName }}" --password-stdin
       - name: Build Docker image
